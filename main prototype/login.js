@@ -1,3 +1,4 @@
+```
 const loginForm = document.getElementById('login-form');
 const rememberMeCheckbox = document.getElementById('remember');
 
@@ -15,13 +16,18 @@ loginForm.addEventListener('submit', function(e) {
     const password = loginForm.password.value;
 
     if (username === 'admin' && password === 'password') {
-        if (rememberMeCheckbox.checked) {
-            localStorage.setItem('rememberedUsername', username);
-        } else {
-            localStorage.removeItem('rememberedUsername');
-        }
+        handleRememberMe(rememberMeCheckbox, username);
         window.location.href = 'admin_dashboard.html';
     } else {
         alert('Invalid username or password');
     }
 });
+
+function handleRememberMe(checkbox, username) {
+    if (checkbox.checked) {
+        localStorage.setItem('rememberedUsername', username);
+    } else {
+        localStorage.removeItem('rememberedUsername');
+    }
+}
+```
