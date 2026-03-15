@@ -1,3 +1,4 @@
+```
 document.addEventListener('DOMContentLoaded', () => {
     // Animations
     const animatedElements = document.querySelectorAll('.animated-element');
@@ -8,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Chart
-    if (typeof Chart !== 'undefined') {
+    if (typeof Chart!== 'undefined') {
         const chartData = {
             labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             datasets: [{
@@ -178,10 +179,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const deleteFile = (fileName, fileType) => {
         if (fileType === 'pdf') {
-            uploadedPDFs = uploadedPDFs.filter(f => f !== fileName);
+            uploadedPDFs = uploadedPDFs.filter(f => f!== fileName);
             renderUploadedFiles(uploadedPDFs, 'pdf-file-list', 'pdf');
         } else if (fileType === 'timetable') {
-            uploadedTimetables = uploadedTimetables.filter(f => f !== fileName);
+            uploadedTimetables = uploadedTimetables.filter(f => f!== fileName);
             renderUploadedFiles(uploadedTimetables, 'timetable-file-list', 'timetable');
         }
     };
@@ -273,3 +274,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+```
