@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SamvaadLM Admin Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "background-light": "#F9FAFB",
+            "background-dark": "#0D1117",
+            "card-light": "#FFFFFF",
+            "card-dark": "#161B22",
+            primary: "#1F6FEB",
+            "text-light": "#1F2937",
+            "text-dark": "#CDD9E5",
+            "text-accent-dark": "#FFFFFF",
+            "text-secondary-light": "#6B7280",
+            "text-secondary-dark": "#8B949E",
+          },
+          fontFamily: {
+            display: ["Inter", "sans-serif"],
+          },
+          borderRadius: {
+            DEFAULT: "0.5rem",
+          },
+        },
+      },
+    };
+  </script>
+<style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .animated-element {
+        transform: translateY(20px);
+        opacity: 0;
+        transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+    }
+    .animated-element.slide-up {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    .drop-zone-active {
+        border-color: #1F6FEB;
+        background-color: rgba(31, 111, 235, 0.1);
+    }
+    .time-button:hover, .download-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    }
+  </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="flex h-screen">
+<div class="flex-1 flex flex-col overflow-hidden">
+<header class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700/50 animated-element">
+<div class="flex items-center space-x-4">
+<button class="text-text-light dark:text-text-dark">
+<span class="material-icons">arrow_back</span>
+</button>
+<div>
+<h1 class="text-xl font-bold text-text-light dark:text-text-dark">SamvaadLM Admin</h1>
+<p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Knowledge Base Management</p>
+</div>
+</div>
+</header>
+<main class="flex-1 overflow-x-hidden overflow-y-auto p-6">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+<div id="total-queries" class="card bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md flex flex-col items-center justify-center text-center animated-element transition-transform duration-300">
+<span class="material-icons text-primary text-3xl mb-2">show_chart</span>
+<p class="text-3xl font-bold text-text-light dark:text-text-dark">1,247</p>
+<p class="text-text-secondary-light dark:text-text-secondary-dark">Total Queries</p>
+</div>
+<div id="total-languages" class="card bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md flex flex-col items-center justify-center text-center animated-element transition-transform duration-300">
+<span class="material-icons text-primary text-3xl mb-2">groups</span>
+<p class="text-3xl font-bold text-text-light dark:text-text-dark">5</p>
+<p class="text-text-secondary-light dark:text-text-secondary-dark">Languages</p>
+</div>
+<div id="unanswered-queries" class="card bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md flex flex-col items-center justify-center text-center animated-element transition-transform duration-300">
+<span class="material-icons text-red-500 text-3xl mb-2">help_outline</span>
+<p class="text-3xl font-bold text-red-500">23</p>
+<p class="text-text-secondary-light dark:text-text-secondary-dark">Unanswered</p>
+</div>
+<div class="card bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md animated-element transition-transform duration-300">
+<h3 class="font-semibold text-text-light dark:text-text-dark mb-3">Top Languages</h3>
+<div id="top-languages" class="space-y-2">
+</div>
+</div>
+</div>
+<div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md mb-6 animated-element">
+<h2 class="text-xl font-semibold text-text-light dark:text-text-dark mb-4 flex items-center">
+<span class="material-icons mr-2">upload_file</span> Document Upload
+                    </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<h3 class="font-medium text-text-light dark:text-text-dark mb-2">PDF Circulars</h3>
+<div class="bg-gray-100 dark:bg-background-dark p-4 rounded-md mb-4 flex items-start text-sm text-text-secondary-light dark:text-text-secondary-dark">
+<span class="material-icons mr-2 text-base">picture_as_pdf</span>
+<p>Upload circulars in PDF format. Max file size: 10MB.</p>
+</div>
+<div id="pdf-drop-zone" class="border-2 border-dashed border-gray-300 dark:border-gray-600/50 rounded-lg p-8 text-center cursor-pointer">
+<input type="file" id="pdf-file-input" class="hidden" accept=".pdf">
+<div class="flex flex-col items-center text-text-secondary-light dark:text-text-secondary-dark">
+<span class="material-icons text-4xl mb-3">upload</span>
+<p class="mb-2 font-semibold text-text-light dark:text-text-dark">Drop PDF files here</p>
+<p class="text-xs mb-3">or click to browse your computer</p>
+<button class="bg-primary text-text-accent-dark font-semibold py-2 px-4 rounded-lg hover:bg-blue-500 transition-colors text-sm">
+                                        Browse PDF
+                                    </button>
+</div>
+</div>
+<div class="mt-6">
+<h3 class="font-medium text-text-light dark:text-text-dark mb-2">Uploaded PDFs</h3>
+<ul id="pdf-file-list" class="space-y-2">
+</ul>
+</div>
+</div>
+<div>
+<h3 class="font-medium text-text-light dark:text-text-dark mb-2">Timetables (CSV/XLS)</h3>
+<div class="bg-gray-100 dark:bg-background-dark p-4 rounded-md mb-4 flex items-start text-sm text-text-secondary-light dark:text-text-secondary-dark">
+<span class="material-icons mr-2 text-base">table_chart</span>
+<p>Upload timetables in CSV or Excel (XLS/XLSX) format. Max file size: 10MB.</p>
+</div>
+<div id="timetable-drop-zone" class="border-2 border-dashed border-gray-300 dark:border-gray-600/50 rounded-lg p-8 text-center cursor-pointer">
+<input type="file" id="timetable-file-input" class="hidden" accept=".csv,.xls,.xlsx">
+<div class="flex flex-col items-center text-text-secondary-light dark:text-text-secondary-dark">
+<span class="material-icons text-4xl mb-3">upload</span>
+<p class="mb-2 font-semibold text-text-light dark:text-text-dark">Drop timetable files here</p>
+<p class="text-xs mb-3">or click to browse your computer</p>
+<button class="bg-primary text-text-accent-dark font-semibold py-2 px-4 rounded-lg hover:bg-blue-500 transition-colors text-sm">
+                                        Browse Files
+                                    </button>
+</div>
+</div>
+<div class="mt-6">
+<h3 class="font-medium text-text-light dark:text-text-dark mb-2">Uploaded Timetables</h3>
+<ul id="timetable-file-list" class="space-y-2">
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md mb-6 animated-element">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            <h2 class="text-xl font-semibold text-text-light dark:text-text-dark mb-4">Test Your Chatbot</h2>
+            <p class="text-text-secondary-light dark:text-text-secondary-dark mb-4">Click the button below to test the chatbot.</p>
+            <a href="chatbot.html" class="inline-block px-6 py-3 font-semibold text-white bg-primary rounded-md hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                Test Your Chat Bot
+            </a>
+        </div>
+        <div>
+            <h2 class="text-xl font-semibold text-text-light dark:text-text-dark mb-4">Embed this chatbot into your college site</h2>
+            <div class="space-y-4">
+                <div>
+                    <label for="website-url" class="text-sm font-medium text-gray-700 dark:text-gray-300">The college website URL</label>
+                    <input id="website-url" name="website-url" type="url" required
+                        class="w-full px-3 py-2 mt-1 text-primary bg-gray-100 dark:bg-background-dark/50 border-2 border-gray-200 dark:border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                </div>
+                <div>
+                    <button id="test-on-site-button"
+                        class="w-full px-4 py-2 font-semibold text-white bg-primary rounded-md hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                        Test the Bot on Your Site
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md animated-element">
+<div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+<h2 class="text-xl font-semibold text-text-light dark:text-text-dark flex items-center">
+<span class="material-icons mr-2">bar_chart</span>Detailed Analytics &amp; Reporting
+</h2>
+<div id="time-buttons" class="flex items-center space-x-2 mt-4 md:mt-0">
+<button data-period="7days" class="time-button bg-gray-200 dark:bg-background-dark/50 text-text-secondary-light dark:text-text-secondary-dark px-3 py-1 rounded-md text-sm transition-transform duration-300">Last 7 Days</button>
+<button data-period="30days" class="time-button bg-primary text-text-accent-dark px-3 py-1 rounded-md text-sm transition-transform duration-300">Last 30 Days</button>
+<button data-period="90days" class="time-button bg-gray-200 dark:bg-background-dark/50 text-text-secondary-light dark:text-text-secondary-dark px-3 py-1 rounded-md text-sm transition-transform duration-300">Last 90 Days</button>
+<button class="download-button text-text-secondary-light dark:text-text-secondary-dark transition-transform duration-300"><span class="material-icons">download</span></button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+<div class="bg-gray-50 dark:bg-background-dark/50 p-4 rounded-lg animated-element">
+<h3 class="font-semibold text-text-light dark:text-text-dark mb-3">Query Volume</h3>
+<div id="query-volume-graph" class="h-40 bg-gray-200 dark:bg-card-dark/50 rounded-md flex items-end justify-center p-2">
+<canvas id="myChart"></canvas>
+</div>
+</div>
+<div class="bg-gray-50 dark:bg-background-dark/50 p-4 rounded-lg animated-element">
+<h3 class="font-semibold text-text-light dark:text-text-dark mb-3">Response Rate</h3>
+<div class="h-40 bg-gray-200 dark:bg-card-dark/50 rounded-md flex items-center justify-center">
+<div class="relative w-28 h-28">
+<svg class="w-full h-full" viewBox="0 0 36 36">
+<path class="text-gray-300 dark:text-text-secondary-dark/30" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-width="3"></path>
+<path id="response-rate-circle" class="text-primary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-dasharray="0, 100" stroke-linecap="round" stroke-width="3" style="transition: stroke-dasharray 0.5s ease-out;"></path>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span id="response-rate-text" class="text-2xl font-bold text-text-light dark:text-text-dark">0%</span>
+<span class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Answered</span>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-gray-50 dark:bg-background-dark/50 p-4 rounded-lg animated-element">
+<h3 class="font-semibold text-text-light dark:text-text-dark mb-3">Average Response Time</h3>
+<div class="h-40 flex items-center justify-center">
+<div class="text-center">
+<p id="avg-response-time" class="text-4xl font-bold text-primary">0s</p>
+<p class="text-text-secondary-light dark:text-text-secondary-dark mt-1">per query</p>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h3 class="font-semibold text-text-light dark:text-text-dark mb-4">Top 10 Most Frequent Queries</h3>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="text-sm text-text-secondary-light dark:text-text-secondary-dark border-b border-gray-200 dark:border-gray-700/50">
+<th class="py-2 px-4 font-medium">Query</th>
+<th class="py-2 px-4 font-medium text-center">Frequency</th>
+<th class="py-2 px-4 font-medium text-center">Avg. Response Time</th>
+</tr>
+</thead>
+<tbody id="top-queries-body">
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+<script src="admin_dashboard.js" defer></script>
+</body></html>

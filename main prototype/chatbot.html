@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Samvaad LM Chat</title>
+    <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect" />
+    <link as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" onload="this.rel='stylesheet'" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            float: left;
+            margin: 0 1px;
+            background-color: #9E9EA1;
+            display: block;
+            border-radius: 50%;
+            opacity: 0.4;
+            animation: 1s blink infinite;
+        }
+        .typing-indicator span:nth-child(2) { animation-delay: .2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: .4s; }
+        @keyframes blink { 50% { opacity: 1; } }
+    </style>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark flex flex-col h-screen">
+    <header class="flex-shrink-0 flex items-center justify-between p-4 bg-background-light dark:bg-background-dark border-b border-white/10 dark:border-white/10">
+        <button class="text-gray-600 dark:text-gray-300">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </button>
+        <img src="./pictures/samvaad_logo.png" alt="Samvaad Logo" class="w-8 h-8 mr-2">
+        <h1 class="text-lg font-bold text-gray-900 dark:text-white">Samvaad<span class="text-primary">LM</span></h1>
+        <div class="relative inline-block text-left w-64" x-data="{ 
+                open: false, 
+                selected: 'Auto-detect', 
+                search: '',
+                initialLanguages: ['Auto-detect', 'English', 'Hindi'],
+                allLanguages: ['Abkhaz', 'Acehnese', 'Acholi', 'Afar', 'Afrikaans', 'Albanian', 'Alur', 'Amharic', 'Arabic', 'Armenian', 'Assamese', 'Avar', 'Awadhi', 'Aymara', 'Azerbaijani', 'Balinese', 'Baluchi', 'Bambara', 'BaoulÃ©', 'Bashkir', 'Basque', 'Batak Karo', 'Batak Simalungun', 'Batak Toba', 'Belarusian', 'Bemba', 'Bengali', 'Betawi', 'Bhojpuri', 'Bikol', 'Bosnian', 'Breton', 'Bulgarian', 'Buryat', 'Cantonese', 'Catalan', 'Cebuano', 'Chamorro', 'Chechen', 'Chinese (Simplified)', 'Chinese (Traditional)', 'Chuukese', 'Chuvash', 'Corsican', 'Crimean Tatar', 'Croatian', 'Czech', 'Danish', 'Dinka', 'Divehi', 'Dogri', 'Dombe', 'Dutch', 'Dyula', 'Dhundhari', 'Dzongkha', 'English', 'Esperanto', 'Estonian', 'Ewe', 'Fijian', 'Filipino (Tagalog)', 'Finnish', 'French', 'Frisian', 'Fulfulde', 'Ga', 'Galician', 'Ganda', 'Georgian', 'German', 'Greek', 'Guarani', 'Gujarati', 'Haitian Creole', 'Hakha Chin', 'Hausa', 'Hawaiian', 'Hebrew', 'Hiligaynon', 'Hindi', 'Hmong', 'Hungarian', 'Hunsrik', 'Iban', 'Icelandic', 'Igbo', 'Iloko', 'Indonesian', 'Irish', 'Italian', 'Javanese', 'Japanese', 'Jingpo', 'Kannada', 'Kalaallisut', 'Kanuri', 'Kapampangan', 'Kashmiri', 'Kazakh', 'Khmer', 'Kiga', 'Kinyarwanda', 'Kituba', 'Konkani', 'Korean', 'Krio', 'Kurdish (Kurmanji and Sorani)', 'Kyrgyz', 'Lao', 'Latgalian', 'Latin', 'Latvian', 'Ligurian', 'Limburgan', 'Lingala', 'Lithuanian', 'Lombard', 'Luo', 'Luxembourgish', 'Macedonian', 'Maithili', 'Makassar', 'Malagasy', 'Malay', 'Marwari', 'Mewari', 'Malayalam', 'Maltese', 'Maori', 'Marathi', 'Meadow Mari', 'Meiteilon (Manipuri)', 'Minang', 'Mizo', 'Mongolian', 'Myanmar (Burmese)', 'Ndebele', 'Nepalbhasa (Newari)', 'Nepali', 'Northern Sotho (Sepedi)', 'Norwegian', 'Nuer', 'Occitan', 'Odia (Oriya)', 'Oromo', 'Pangasinan', 'Papiamento', 'Pashto', 'Persian', 'Polish', 'Portuguese', 'Punjabi', 'Quechua', 'Romani', 'Romanian', 'Rundi', 'Russian', 'Samoan', 'Sango', 'Sanskrit', 'Scots Gaelic', 'Serbian', 'Sesotho', 'Seychelles Creole', 'Shan', 'Shona', 'Sicilian', 'Silesian', 'Sindhi', 'Sinhala', 'Slovak', 'Slovenian', 'Somali', 'Spanish', 'Sundanese', 'Swahili', 'Swati', 'Swedish', 'Tajik', 'Tamil', 'Tatar', 'Telugu', 'Tetum', 'Thai', 'Tigrinya', 'Tsonga', 'Tswana', 'Turkish', 'Turkmen', 'Twi (Akan)', 'Ukrainian', 'Urdu', 'Uyghur', 'Uzbek', 'Vietnamese', 'Welsh', 'Xhosa', 'Yiddish', 'Yoruba', 'Yucatec Maya', 'Zulu'],
+                get filteredLanguages() {
+                    if (this.search === '') {
+                        return this.initialLanguages;
+                    }
+                    const uniqueLanguages = new Set(['Auto-detect', ...this.allLanguages]);
+                    return Array.from(uniqueLanguages).filter(
+                        i => i.toLowerCase().includes(this.search.toLowerCase())
+                    )
+                }
+            }">
+            <div>
+                <button @click="open = !open" aria-expanded="true" aria-haspopup="true" class="inline-flex justify-between w-full rounded-md border border-white/10 shadow-sm px-4 py-2 bg-background-dark text-sm font-medium text-gray-300 hover:bg-background-dark/80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background-dark focus:ring-primary" id="menu-button" type="button">
+                    <span x-text="selected"></span>
+                    <span :class="{ 'rotate-180': open }" class="material-symbols-outlined -mr-1 ml-2 h-5 w-5 transition-transform">
+                        expand_more
+                    </span>
+                </button>
+            </div>
+            <div @click.outside="open = false" aria-labelledby="menu-button" aria-orientation="vertical" class="origin-top-right absolute right-0 mt-2 w-full rounded-md shadow-lg bg-background-dark ring-1 ring-white/10 ring-opacity-50 focus:outline-none" role="menu" tabindex="-1" x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-end="transform opacity-100 scale-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:leave="transition ease-in duration-75" x-transition:leave-end="transform opacity-0 scale-95" x-transition:leave-start="transform opacity-100 scale-100">
+                <div class="p-2 border-b border-white/10">
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+                        <input class="w-full bg-background-dark/50 border-none rounded-md pl-10 pr-10 py-2 text-sm text-gray-300 focus:ring-primary focus:border-primary" placeholder="Search language..." type="text" x-model.debounce.300ms="search" />
+                        <button @click="search = ''" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white" x-cloak="" x-show="search.length > 0">
+                            <span class="material-symbols-outlined text-base">close</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="py-1 max-h-60 overflow-y-auto" role="none">
+                    <template :key="language" x-for="language in filteredLanguages">
+                        <a :class="{ 
+                                'bg-primary text-white': selected === language, 
+                                'text-gray-300': selected !== language 
+                            }" @click="selected = language; open = false; search = ''" class="flex items-center px-4 py-2 text-sm hover:bg-primary hover:text-white cursor-pointer" href="#" role="menuitem" tabindex="-1">
+                            <span :class="{ 'opacity-100': selected === language, 'opacity-0': selected !== language }" class="material-symbols-outlined mr-3">check</span>
+                            <span x-text="language"></span>
+                        </a>
+                    </template>
+                    <div class="px-4 py-2 text-sm text-gray-500" x-show="filteredLanguages.length === 0">No results found.</div>
+                </div>
+            </div>
+        </div>
+        <button class="text-gray-600 dark:text-gray-300">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </header>
+    <div class="px-4 py-3 flex-shrink-0">
+        <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500">search</span>
+            <input class="w-full rounded-lg bg-background-dark/50 dark:bg-background-light/5 py-2.5 pl-10 pr-4 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 border-none focus:ring-2 focus:ring-primary" placeholder="Search" type="search" />
+        </div>
+    </div>
+    <main class="flex-grow overflow-y-auto px-4 py-2" style="scroll-behavior: smooth;">
+        <div class="flex items-end gap-3">
+            <img src="./pictures/icon.png" alt="Chatbot Icon" class="w-10 h-10 shrink-0 rounded-full bg-cover bg-center">
+            <div class="flex flex-col gap-1 items-start">
+                <p class="text-sm text-gray-500 dark:text-gray-400">Samvaad LM</p>
+                <div class="max-w-xs rounded-lg bg-background-dark/50 dark:bg-background-light/5 px-4 py-2.5 text-gray-900 dark:text-white">
+                    <p>Hello! How can I assist you today?</p>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="flex-shrink-0 bg-background-light dark:bg-background-dark pt-2 pb-4 px-4 border-t border-white/10 dark:border-white/10">
+        <div class="flex flex-wrap gap-2 mb-3" id="suggestion-buttons">
+            <button class="text-sm font-medium text-primary bg-primary/10 dark:bg-primary/20 rounded-lg px-3 py-1.5">Fee deadlines</button>
+            <button class="text-sm font-medium text-primary bg-primary/10 dark:bg-primary/20 rounded-lg px-3 py-1.5">Course schedule</button>
+            <button class="text-sm font-medium text-primary bg-primary/10 dark:bg-primary/20 rounded-lg px-3 py-1.5">Contact admin</button>
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="flex-grow relative">
+                <input id="chat-input" class="w-full rounded-lg bg-background-dark/50 dark:bg-background-light/5 py-3 pl-4 pr-24 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 border-none focus:ring-2 focus:ring-primary" placeholder="Type your message..." type="text" />
+                <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center">
+                    <button class="p-1.5 text-gray-500 dark:text-gray-400 hover:text-primary">
+                        <span class="material-symbols-outlined text-xl">mic</span>
+                    </button>
+                    <button class="p-1.5 text-gray-500 dark:text-gray-400 hover:text-primary">
+                        <span class="material-symbols-outlined text-xl">attach_file</span>
+                    </button>
+                </div>
+            </div>
+            <button id="send-button" class="flex-shrink-0 bg-primary text-white rounded-lg px-5 py-3 font-semibold">
+                Send
+            </button>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
