@@ -464,3 +464,13 @@ This file handles user interactions in a chat interface, allowing users to send 
 - Ensure the HTML elements with IDs `chat-input`, `send-button`, `main`, and `suggestion-buttons` exist in the DOM for this script to work correctly.
 - The bot's responses are hardcoded for specific queries. Adding more responses requires modifying the `getBotResponse` function.
 
+## Code Improvements Applied
+
+- Add regression tests around the highest-risk files: `main prototype/login.js`, `main prototype/admin_dashboard.js`, `main prototype/newad.js`.
+- Consider extracting shared utility code into a dedicated module to lower coupling.
+- Re-index and regenerate walkthroughs/diagrams after structural changes to keep documentation current.
+
+Files changed:
+- `main prototype/login.js`
+- `main prototype/admin_dashboard.js`
+- `main prototype/newad.js`
